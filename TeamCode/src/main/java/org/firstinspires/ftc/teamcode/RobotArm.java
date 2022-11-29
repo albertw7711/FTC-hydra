@@ -88,10 +88,10 @@ public class RobotArm extends OpMode{
 
         //updated arm movement
         if (gamepad2.dpad_up) {
-            RoboArmNum += 50;
+            RoboArmNum += 30;
         }
         else if (gamepad2.dpad_down) {
-            RoboArmNum -= 50;
+            RoboArmNum -= 30;
         }
         //one key move
         if (gamepad2.left_bumper) {
