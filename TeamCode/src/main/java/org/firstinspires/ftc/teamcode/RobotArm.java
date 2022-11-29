@@ -85,19 +85,53 @@ public class RobotArm extends OpMode{
 
 
     public void loop() {
+
+        //updated arm movement
+        if (gamepad2.dpad_up) {
+            RoboArmNum += 50;
+        }
+        else if (gamepad2.dpad_down) {
+            RoboArmNum -= 50;
+        }
+        //one key move
+        if (gamepad2.left_bumper) {
+            RoboArmNum = 900;
+        } else if (gamepad2.right_bumper) {
+            RoboArmNum = 0;
+        }
+
+        // set power, position
+        ArmMotor.setPower(1);
+        ArmMotor.setTargetPosition((int)RoboArmNum);
+        telemetry.addData("Motor position: ", RoboArmNum);
+
+        //claw movement
+        if(gamepad2.a) {
+            //open
+            claw.setPosition(0.05);
+            telemetry.addData("Claw servo set position:", "-0.25");
+        } else if (gamepad2.b) {
+            claw.setPosition(0.3);
+            telemetry.addData("Claw servo set position:", "0.35");
+        }
+        telemetry.update();
+
+        /* not needed
         double MIN_POSITION = 0.0;
         double MAX_POSITION = 1.0;
-
+        */
         //if (claw.getDirection() == Servo.Direction.FORWARD) {
             //double clawPos = claw.getDirection();
         //} else if (claw.getDirection() == Servo.Direction.REVERSE) {
 
         //}
-
+            /* not needed
             double RotPos = 1;
             int speedMod = 2;
+            */
 
-            // Claw rotation
+            // Claw rotation (not used)
+            /*
             if (gamepad2.dpad_up) {
                 clawRot.setPosition(RotPos);
                 telemetry.addData("action:", "rightstick, claw rotation");
@@ -107,7 +141,7 @@ public class RobotArm extends OpMode{
             } else {
                 clawRot.setPosition(0);
             }
-
+            */
 
             // Clwa open / close
         /*
@@ -134,33 +168,13 @@ public class RobotArm extends OpMode{
             roboArmUp.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             */
 
+            /* (Using joystick)
             // negative because motor is reversed
             RoboArmNum -= gamepad2.right_stick_y * 4;
             // min, max values
             RoboArmNum = Math.min(900, RoboArmNum);
             RoboArmNum = Math.max(0, RoboArmNum);
-
-            if (gamepad2.left_bumper) {
-                RoboArmNum = 900;
-            } else if (gamepad2.right_bumper) {
-                RoboArmNum = 0;
-            }
-
-            // set power, position
-            ArmMotor.setPower(1);
-            ArmMotor.setTargetPosition((int)RoboArmNum);
-            telemetry.addData("Motor position: ", RoboArmNum);
-
-
-                if(gamepad2.a) {
-                    //open
-                    claw.setPosition(0.05);
-                    telemetry.addData("Claw servo set position:", "-0.25");
-                } else if (gamepad2.b) {
-                    claw.setPosition(0.3);
-                    telemetry.addData("Claw servo set position:", "0.35");
-                }
-                telemetry.update();
+            */
 
 
 
