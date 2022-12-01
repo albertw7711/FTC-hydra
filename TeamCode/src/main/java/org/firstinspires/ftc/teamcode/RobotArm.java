@@ -30,6 +30,7 @@ public class RobotArm extends OpMode{
 
 
     //INTRODUCE VARIABLES HERE
+    /*
 
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -47,10 +48,10 @@ public class RobotArm extends OpMode{
 
     // UNITS ARE METERS
     double tagsize = 0.166;
-
+    */
     // Tag ID 1,2,3 from the 36h11 family
     /*EDIT IF NEEDED!!!*/
-
+/*
     int LEFT = 1;
     int MIDDLE = 2;
     int RIGHT = 3;
@@ -59,6 +60,8 @@ public class RobotArm extends OpMode{
 
     //https://github.com/FTCLib/FTCLib
     //https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/Java-Sample-Op-Mode-for-TensorFlow-Object-Detection
+
+ */
     public void init() {
         //clawRot = hardwareMap.get(CRServo.class, "Servo");
         clawRot = hardwareMap.get(Servo.class, "Servo");
