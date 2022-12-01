@@ -109,8 +109,18 @@ android {
 apply from: '../moduleFlavors.gradle'
 
 repositories {
+    mavenCentral()
+    google() // Needed for androidx
+    jcenter()  // Needed for tensorflow-lite
+    maven { url = 'https://maven.brott.dev/' }
     flatDir {
         dirs rootProject.file('libs')
+    }
+}
+
+dependencies {
+    implementation('com.acmerobotics.dashboard:dashboard:0.4.6') {
+        exclude group: 'org.firstinspires.ftc'
     }
 }
 //apply from: 'build.release.gradle'

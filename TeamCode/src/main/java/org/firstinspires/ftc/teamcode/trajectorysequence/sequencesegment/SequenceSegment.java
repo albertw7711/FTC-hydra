@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment;
 
-//import com.acmerobotics.roadrunner.geometry.Pose2d;
-//import com.acmerobotics.roadrunner.trajectory.TrajectoryMarker;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryMarker;
 
 import java.util.List;
-/*
+
 public abstract class SequenceSegment {
     private final double duration;
     private final Pose2d startPose;
@@ -38,4 +38,3 @@ public abstract class SequenceSegment {
         return markers;
     }
 }
-*/
