@@ -26,6 +26,7 @@ public class RobotArm extends OpMode{
     DcMotor frontRMotor = null;
 
     DcMotor ArmMotor = null;
+    DcMotor ArmMotor2 = null;
     float RoboArmNum = 0;
 
 
@@ -75,14 +76,18 @@ public class RobotArm extends OpMode{
         frontRMotor = hardwareMap.get(DcMotor.class, "frontR");
 
 
-        ArmMotor = hardwareMap.get(DcMotor.class, "Arm");
+        ArmMotor = hardwareMap.get(DcMotor.class, "Arm1");
+        ArmMotor2 = hardwareMap.get(DcMotor.class, "Arm2");
 
 
         ArmMotor.setTargetPosition(0);
+        ArmMotor2.setTargetPosition(0);
         //Resetting motor encoders
         ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ArmMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //setting motor mode
         ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ArmMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
     }
 
@@ -91,10 +96,10 @@ public class RobotArm extends OpMode{
 
         //updated arm movement
         if (gamepad2.dpad_up) {
-            RoboArmNum += 30;
+            RoboArmNum += 10;
         }
         else if (gamepad2.dpad_down) {
-            RoboArmNum -= 30;
+            RoboArmNum -= 10;
         }
         //one key move
         if (gamepad2.left_bumper) {
@@ -106,6 +111,8 @@ public class RobotArm extends OpMode{
         // set power, position
         ArmMotor.setPower(1);
         ArmMotor.setTargetPosition((int)RoboArmNum);
+        ArmMotor2.setPower(1);
+        ArmMotor2.setTargetPosition(-(int)RoboArmNum);
         telemetry.addData("Motor position: ", RoboArmNum);
 
         //claw movement
