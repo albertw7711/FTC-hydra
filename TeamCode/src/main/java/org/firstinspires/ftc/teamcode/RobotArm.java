@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 
@@ -26,8 +30,8 @@ public class RobotArm extends OpMode{
     DcMotor frontLMotor = null;
     DcMotor frontRMotor = null;
 
-    DcMotor ArmMotor1 = null;
-    DcMotor ArmMotor2 = null;
+    DcMotorEx ArmMotor1 = null;
+    DcMotorEx ArmMotor2 = null;
     float RoboArmNum = 0;
 
 
@@ -76,12 +80,22 @@ public class RobotArm extends OpMode{
         frontRMotor = hardwareMap.get(DcMotor.class, "frontR");
 
 
-        ArmMotor1 = hardwareMap.get(DcMotor.class, "Arm1");
-        ArmMotor2 = hardwareMap.get(DcMotor.class, "Arm2");
+        ArmMotor1 = hardwareMap.get(DcMotorEx.class, "Arm1");
+        ArmMotor2 = hardwareMap.get(DcMotorEx.class, "Arm2");
 
 
         ArmMotor1.setTargetPosition(0);
         ArmMotor2.setTargetPosition(0);
+        ArmMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
+        ArmMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+        ArmMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ArmMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ArmMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ArmMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ArmMotor1.setVelocity(500);
+        ArmMotor2.setVelocity(500);
+
+        telemetry.setAutoClear(false);
 
     }
 
@@ -94,20 +108,23 @@ public class RobotArm extends OpMode{
         motor1.setTargetPosition(targetPosition);
         motor2.setTargetPosition(targetPosition);
         boolean isOnTarget = false;
-        while (!isOnTarget && this.getRuntime() > 0.1)
+        while (!isOnTarget)
         {
-            telemetry.addData("ArmMotor1 Position: ", motor1.getCurrentPosition());
-            telemetry.addData("ArmMotor2 Position: ", motor2.getCurrentPosition());
-            telemetry.update();
             double differentiatePower = (motor2.getCurrentPosition() - motor1.getCurrentPosition())*LIFT_SYNC_KP;
             motor1.setPower(Range.clip(power + differentiatePower, -1.0, 1.0));
             motor2.setPower(Range.clip(power, -1.0, 1.0));
             isOnTarget = Math.abs(targetPosition - motor1.getCurrentPosition()) <= LIFT_POSITION_TOLERANCE &&
                     Math.abs(targetPosition - motor2.getCurrentPosition()) <= LIFT_POSITION_TOLERANCE;
-            this.resetRuntime();
+            telemetry.clear();
+            telemetry.addLine()
+                    .addData("targetPosition", targetPosition)
+                    .addData("armMotor1Position", motor1.getCurrentPosition())
+                    .addData("armMotor2Position", motor2.getCurrentPosition())
+                    .addData("isOnTarget", isOnTarget)
+                    .addData("armMotor1Power", motor1.getPower())
+                    .addData("armMotor2Power", motor2.getPower());
+            telemetry.update();
         }
-        motor1.setPower(0.0);
-        motor2.setPower(0.0);
     }
 
     public void loop() {
@@ -122,7 +139,6 @@ public class RobotArm extends OpMode{
 
             double RotPos = 1;
             int speedMod = 2;
-
             // Claw rotation
             if (gamepad2.dpad_up) {
                 // clawRot.setPosition(RotPos);
@@ -159,12 +175,11 @@ public class RobotArm extends OpMode{
             roboArmUp.setPower(gamepad2.right_stick_y/speedMod);
             roboArmUp.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             */
-            int RoboArmMax = 500;
-            int RoboArmTop = 500;
-            int RoboArmMid = 250;
-            int RoboArmBot = 100;
-            double RoboArmPower = 1.0;
-            RoboArmNum += gamepad2.left_stick_y * 4;
+            int RoboArmMax = 5000;
+            int RoboArmTop = 5000;
+            int RoboArmMid = 2500;
+            int RoboArmBot = 1000;
+            RoboArmNum -= gamepad2.left_stick_y * 4;
             if (gamepad2.y) {
                 RoboArmNum = RoboArmTop;
             } else if (gamepad2.b) {
@@ -173,13 +188,22 @@ public class RobotArm extends OpMode{
                 RoboArmNum = RoboArmBot;
             }
             // min, max values
-            RoboArmNum = Math.max(RoboArmMax, RoboArmNum);
-            RoboArmNum = Math.min(0, RoboArmNum);
+            RoboArmNum = Math.min(RoboArmMax, RoboArmNum);
+            RoboArmNum = Math.max(0, RoboArmNum);
 
             // set power, position
-            setSyncMotorPosition(ArmMotor1, ArmMotor2, Math.round(RoboArmNum), RoboArmPower);
+            // setSyncMotorPosition(ArmMotor1, ArmMotor2, Math.round(RoboArmNum), RoboArmPower);
             // telemetry.addData("Motor position: ", RoboArmNum);
             // telemetry.update();
+
+            ArmMotor1.setTargetPosition(Math.round(RoboArmNum));
+            ArmMotor2.setTargetPosition(Math.round(RoboArmNum));
+            telemetry.clear();
+            telemetry.addLine()
+                    .addData("targetPosition", RoboArmNum)
+                    .addData("armMotor1Position", ArmMotor1.getCurrentPosition())
+                    .addData("armMotor2Position", ArmMotor2.getCurrentPosition());
+            telemetry.update();
 
 
                 if(gamepad2.left_bumper) {
