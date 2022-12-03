@@ -17,12 +17,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 
 @TeleOp()
 public class RobotArm extends OpMode{
-
-    //CRServo clawRot;
-    // Servo clawRot;
-    // Servo claw;
-    //DcMotor roboArm = null;
-    //DcMotor roboArmUp = null;
+    Servo claw;
 
     DcMotor leftMotor = null;
     DcMotor rightMotor = null;
@@ -68,10 +63,7 @@ public class RobotArm extends OpMode{
     //https://github.com/FTCLib/FTCLib
     //https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/Java-Sample-Op-Mode-for-TensorFlow-Object-Detection
     public void init() {
-        //clawRot = hardwareMap.get(CRServo.class, "Servo");
-        // clawRot = hardwareMap.get(Servo.class, "Servo");
-        // claw = hardwareMap.get(Servo.class, "Servo2");
-
+        claw = hardwareMap.get(Servo.class, "Servo");
 
         leftMotor = hardwareMap.get(DcMotor.class, "backL");
         rightMotor = hardwareMap.get(DcMotor.class, "backR");
@@ -86,7 +78,7 @@ public class RobotArm extends OpMode{
 
         ArmMotor1.setTargetPosition(0);
         ArmMotor2.setTargetPosition(0);
-        ArmMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
+        ArmMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
         ArmMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
         ArmMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ArmMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -131,117 +123,75 @@ public class RobotArm extends OpMode{
         double MIN_POSITION = 0.0;
         double MAX_POSITION = 1.0;
 
-        //if (claw.getDirection() == Servo.Direction.FORWARD) {
-            //double clawPos = claw.getDirection();
-        //} else if (claw.getDirection() == Servo.Direction.REVERSE) {
+        // Claw Code
+        if(gamepad2.a) {
+            //open
+            claw.setPosition(0.1);
+        } else if (gamepad2.b) {
+            claw.setPosition(0);
+        }
 
-        //}
-
-            double RotPos = 1;
-            int speedMod = 2;
-            // Claw rotation
-            if (gamepad2.dpad_up) {
-                // clawRot.setPosition(RotPos);
-                telemetry.addData("action:", "rightstick, claw rotation");
-            } else if (gamepad2.dpad_down) {
-                // clawRot.setPosition(-RotPos);
-                telemetry.addData("action:", "reverse rotation");
-            } else {
-                // clawRot.setPosition(0);
-            }
+        telemetry.addData("Claw Position: ", claw.getPosition());
+        telemetry.update();
 
 
-            // Clwa open / close
-        /*
-            if (gamepad2.left_trigger != 0) {
-                claw.setPosition(1);
-                telemetry.addData("action:", "claw open");
-            } else if (gamepad1.left_bumper) {
-                claw.setPosition(-1);
-                telemetry.addData("action:", "claw close");
-            }
+        int RoboArmMax = 5000;
+        int RoboArmTop = 5000;
+        int RoboArmMid = 2500;
+        int RoboArmBot = 1000;
 
-         */
+        RoboArmNum -= gamepad2.left_stick_y * 4;
+//            if (gamepad2.y) {
+//                RoboArmNum = RoboArmTop;
+//            } else if (gamepad2.b) {
+//                RoboArmNum = RoboArmMid;
+//            } else if (gamepad2.a) {
+//                RoboArmNum = RoboArmBot;
+//            }
+//            // min, max values
+//            RoboArmNum = Math.min(RoboArmMax, RoboArmNum);
+//            RoboArmNum = Math.max(0, RoboArmNum);
 
-            /* Previous code
-            //Robot arm
-            if (gamepad2.right_bumper) {
-                speedMod = 1;
-            }
+        // set power, position
+        // setSyncMotorPosition(ArmMotor1, ArmMotor2, Math.round(RoboArmNum), RoboArmPower);
+        // telemetry.addData("Motor position: ", RoboArmNum);
+        // telemetry.update();
 
-            roboArm.setPower(gamepad2.left_stick_y/speedMod);
-            roboArm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
-            roboArmUp.setPower(gamepad2.right_stick_y/speedMod);
-            roboArmUp.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-            */
-            int RoboArmMax = 5000;
-            int RoboArmTop = 5000;
-            int RoboArmMid = 2500;
-            int RoboArmBot = 1000;
-            RoboArmNum -= gamepad2.left_stick_y * 4;
-            if (gamepad2.y) {
-                RoboArmNum = RoboArmTop;
-            } else if (gamepad2.b) {
-                RoboArmNum = RoboArmMid;
-            } else if (gamepad2.a) {
-                RoboArmNum = RoboArmBot;
-            }
-            // min, max values
-            RoboArmNum = Math.min(RoboArmMax, RoboArmNum);
-            RoboArmNum = Math.max(0, RoboArmNum);
-
-            // set power, position
-            // setSyncMotorPosition(ArmMotor1, ArmMotor2, Math.round(RoboArmNum), RoboArmPower);
-            // telemetry.addData("Motor position: ", RoboArmNum);
-            // telemetry.update();
-
-            ArmMotor1.setTargetPosition(Math.round(RoboArmNum));
-            ArmMotor2.setTargetPosition(Math.round(RoboArmNum));
-            telemetry.clear();
-            telemetry.addLine()
-                    .addData("targetPosition", RoboArmNum)
-                    .addData("armMotor1Position", ArmMotor1.getCurrentPosition())
-                    .addData("armMotor2Position", ArmMotor2.getCurrentPosition());
-            telemetry.update();
-
-
-                if(gamepad2.left_bumper) {
-                    //open
-                    // claw.setPosition(0.05);
-                    telemetry.addData("Claw servo set position:", "0.05");
-                } else if (gamepad2.right_bumper) {
-                    // claw.setPosition(0.3);
-                    telemetry.addData("Claw servo set position:", "0.3");
-                }
-                telemetry.update();
+        ArmMotor1.setTargetPosition(Math.round(RoboArmNum));
+        ArmMotor2.setTargetPosition(Math.round(RoboArmNum));
+        telemetry.clear();
+        telemetry.addLine()
+                .addData("targetPosition", RoboArmNum)
+                .addData("armMotor1Position", ArmMotor1.getCurrentPosition())
+                .addData("armMotor2Position", ArmMotor2.getCurrentPosition());
+        telemetry.update();
 
 
 
         // Drive --------------------------------------------------------------------
-            // assign speed modifier
-            int speedModB = 2;
+        // assign speed modifier
+        int speedModB = 2;
 
 
-            if (gamepad1.right_bumper) {
-                speedModB = 1;
-            }
-            if (gamepad1.left_bumper) {
-                speedModB = 3;
-            }
+        if (gamepad1.right_bumper) {
+            speedModB = 1;
+        }
+        if (gamepad1.left_bumper) {
+            speedModB = 3;
+        }
 
-            // Mecanum Drive
-            double r = Math.hypot(gamepad1.left_stick_x, gamepad1.right_stick_x);
-            double robotAngle = Math.atan2(- 1 * gamepad1.right_stick_x, gamepad1.left_stick_x) - Math.PI / 4;
-            double rightX = gamepad1.left_stick_y;
-            final double v1 = r * Math.cos(-robotAngle) + rightX; //back left
-            final double v2 = r * Math.sin(robotAngle) - rightX; //front right
-            final double v3 = r * Math.sin(robotAngle) + rightX; //front left
-            final double v4 = r * Math.cos(-robotAngle) - rightX; //back right
+        // Mecanum Drive
+        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.right_stick_x);
+        double robotAngle = Math.atan2(- 1 * gamepad1.right_stick_x, gamepad1.left_stick_x) - Math.PI / 4;
+        double rightX = gamepad1.left_stick_y;
+        final double v1 = r * Math.cos(-robotAngle) + rightX; //back left
+        final double v2 = r * Math.sin(robotAngle) - rightX; //front right
+        final double v3 = r * Math.sin(robotAngle) + rightX; //front left
+        final double v4 = r * Math.cos(-robotAngle) - rightX; //back right
 
-            frontLMotor.setPower(v3 / speedModB);
-            frontRMotor.setPower(v2 / speedModB);
-            leftMotor.setPower(v1 / speedModB);
-            rightMotor.setPower(v4 / speedModB);
+        frontLMotor.setPower(v3 / speedModB);
+        frontRMotor.setPower(v2 / speedModB);
+        leftMotor.setPower(v1 / speedModB);
+        rightMotor.setPower(v4 / speedModB);
     }
 }
