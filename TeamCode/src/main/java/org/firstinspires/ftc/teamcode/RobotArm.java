@@ -122,17 +122,21 @@ public class RobotArm extends OpMode{
     public void loop() {
         double MIN_POSITION = 0.0;
         double MAX_POSITION = 1.0;
+        String currentClawState = "closed";
 
         // Claw Code
-        if(gamepad2.a) {
-            //open
-            claw.setPosition(0.1);
-        } else if (gamepad2.b) {
+        if(gamepad2.b) {
+            // open
+            currentClawState = "open";
+            claw.setPosition(0.4);
+        } else if (gamepad2.a) {
+            // closed
+            currentClawState = "closed";
             claw.setPosition(0);
         }
 
-        telemetry.addData("Claw Position: ", claw.getPosition());
-        telemetry.update();
+        telemetry.addData("Claw:", currentClawState);
+
 
 
         int RoboArmMax = 5000;
