@@ -19,6 +19,12 @@ import org.openftc.easyopencv.OpenCvCamera;
 public class RobotArm extends OpMode{
     Servo claw;
 
+    int maxArmPos;
+    int minArmPos;
+    boolean runtoSet = false;
+
+    String currentClawState = "closed";
+
     DcMotor leftMotor = null;
     DcMotor rightMotor = null;
 
@@ -80,12 +86,18 @@ public class RobotArm extends OpMode{
         ArmMotor2.setTargetPosition(0);
         ArmMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
         ArmMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+
         ArmMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ArmMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         ArmMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         ArmMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        ArmMotor1.setVelocity(500);
-        ArmMotor2.setVelocity(500);
+
+        ArmMotor1.setVelocity(1200);
+        ArmMotor2.setVelocity(1200);
+
+        ArmMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ArmMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         telemetry.setAutoClear(false);
 
@@ -119,10 +131,13 @@ public class RobotArm extends OpMode{
         }
     }
 
+    public void velocityCurve(DcMotor motor1, DcMotor motor2, float RoboArmNum) {
+        int currentArmPos = (ArmMotor1.getCurrentPosition() + ArmMotor2.getCurrentPosition())/2;
+    }
+
+
     public void loop() {
-        double MIN_POSITION = 0.0;
-        double MAX_POSITION = 1.0;
-        String currentClawState = "closed";
+        telemetry.clear();
 
         // Claw Code
         if(gamepad2.b) {
@@ -137,37 +152,59 @@ public class RobotArm extends OpMode{
 
         telemetry.addData("Claw:", currentClawState);
 
-
-
         int RoboArmMax = 5000;
         int RoboArmTop = 5000;
         int RoboArmMid = 2500;
         int RoboArmBot = 1000;
 
         RoboArmNum -= gamepad2.left_stick_y * 4;
-//            if (gamepad2.y) {
-//                RoboArmNum = RoboArmTop;
-//            } else if (gamepad2.b) {
-//                RoboArmNum = RoboArmMid;
-//            } else if (gamepad2.a) {
-//                RoboArmNum = RoboArmBot;
-//            }
-//            // min, max values
-//            RoboArmNum = Math.min(RoboArmMax, RoboArmNum);
-//            RoboArmNum = Math.max(0, RoboArmNum);
+
+        // RoboArmNum = Math.min(RoboArmMax, RoboArmNum);
+        // RoboArmNum = Math.max(0, RoboArmNum);
 
         // set power, position
         // setSyncMotorPosition(ArmMotor1, ArmMotor2, Math.round(RoboArmNum), RoboArmPower);
         // telemetry.addData("Motor position: ", RoboArmNum);
         // telemetry.update();
 
+
+        // Sets up max and min positions
+        if(gamepad2.dpad_up) {
+            maxArmPos = (ArmMotor1.getCurrentPosition() + ArmMotor2.getCurrentPosition())/2;
+            runtoSet = true;
+        } else if (gamepad2.dpad_down) {
+            minArmPos = (ArmMotor1.getCurrentPosition() + ArmMotor2.getCurrentPosition())/2;
+        }
+
+        // If the max and min values have been set
+        if(runtoSet) {
+            if(gamepad2.right_trigger > 0.5) {
+                RoboArmNum = maxArmPos;
+
+                // Make zoom zoom
+                ArmMotor1.setVelocity(1200);
+                ArmMotor2.setVelocity(1200);
+            } else if (gamepad2.left_trigger > 0.5) {
+                RoboArmNum = minArmPos;
+
+                // Make not so zoom zoom so servo doesn't die
+                ArmMotor1.setVelocity(800);
+                ArmMotor2.setVelocity(800);
+            }
+        }
+
+        telemetry.addData("Right Trigger:", gamepad2.right_trigger);
+
+        telemetry.addData("Max Pos:", maxArmPos);
+        telemetry.addData("Min Pos:", minArmPos);
+
+
         ArmMotor1.setTargetPosition(Math.round(RoboArmNum));
         ArmMotor2.setTargetPosition(Math.round(RoboArmNum));
-        telemetry.clear();
-        telemetry.addLine()
-                .addData("targetPosition", RoboArmNum)
-                .addData("armMotor1Position", ArmMotor1.getCurrentPosition())
-                .addData("armMotor2Position", ArmMotor2.getCurrentPosition());
+
+        telemetry.addData("Arm Driver 1:", ArmMotor1.getCurrentPosition());
+        telemetry.addData("Arm Driver 2:", ArmMotor2.getCurrentPosition());
+
         telemetry.update();
 
 
@@ -175,7 +212,6 @@ public class RobotArm extends OpMode{
         // Drive --------------------------------------------------------------------
         // assign speed modifier
         int speedModB = 2;
-
 
         if (gamepad1.right_bumper) {
             speedModB = 1;
