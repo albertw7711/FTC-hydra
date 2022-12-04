@@ -17,12 +17,13 @@ import org.openftc.easyopencv.OpenCvCamera;
 
 @TeleOp()
 public class RobotArm extends OpMode{
+    Servo claw;
 
-    //CRServo clawRot;
-    // Servo clawRot;
-    // Servo claw;
-    //DcMotor roboArm = null;
-    //DcMotor roboArmUp = null;
+    int maxArmPos;
+    int minArmPos;
+    boolean runtoSet = false;
+
+    String currentClawState = "closed";
 
     DcMotor leftMotor = null;
     DcMotor rightMotor = null;
@@ -68,10 +69,7 @@ public class RobotArm extends OpMode{
     //https://github.com/FTCLib/FTCLib
     //https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/Java-Sample-Op-Mode-for-TensorFlow-Object-Detection
     public void init() {
-        //clawRot = hardwareMap.get(CRServo.class, "Servo");
-        // clawRot = hardwareMap.get(Servo.class, "Servo");
-        // claw = hardwareMap.get(Servo.class, "Servo2");
-
+        claw = hardwareMap.get(Servo.class, "Servo");
 
         leftMotor = hardwareMap.get(DcMotor.class, "backL");
         rightMotor = hardwareMap.get(DcMotor.class, "backR");
@@ -86,14 +84,20 @@ public class RobotArm extends OpMode{
 
         ArmMotor1.setTargetPosition(0);
         ArmMotor2.setTargetPosition(0);
-        ArmMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
+        ArmMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
         ArmMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+
         ArmMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ArmMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         ArmMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         ArmMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        ArmMotor1.setVelocity(500);
-        ArmMotor2.setVelocity(500);
+
+        ArmMotor1.setVelocity(1200);
+        ArmMotor2.setVelocity(1200);
+
+        ArmMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ArmMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         telemetry.setAutoClear(false);
 
@@ -127,121 +131,107 @@ public class RobotArm extends OpMode{
         }
     }
 
+    public void velocityCurve(DcMotor motor1, DcMotor motor2, float RoboArmNum) {
+        int currentArmPos = (ArmMotor1.getCurrentPosition() + ArmMotor2.getCurrentPosition())/2;
+    }
+
+
     public void loop() {
-        double MIN_POSITION = 0.0;
-        double MAX_POSITION = 1.0;
+        telemetry.clear();
 
-        //if (claw.getDirection() == Servo.Direction.FORWARD) {
-            //double clawPos = claw.getDirection();
-        //} else if (claw.getDirection() == Servo.Direction.REVERSE) {
+        // Claw Code
+        if(gamepad2.b) {
+            // open
+            currentClawState = "open";
+            claw.setPosition(0.4);
+        } else if (gamepad2.a) {
+            // closed
+            currentClawState = "closed";
+            claw.setPosition(0);
+        }
 
-        //}
+        telemetry.addData("Claw:", currentClawState);
 
-            double RotPos = 1;
-            int speedMod = 2;
-            // Claw rotation
-            if (gamepad2.dpad_up) {
-                // clawRot.setPosition(RotPos);
-                telemetry.addData("action:", "rightstick, claw rotation");
-            } else if (gamepad2.dpad_down) {
-                // clawRot.setPosition(-RotPos);
-                telemetry.addData("action:", "reverse rotation");
-            } else {
-                // clawRot.setPosition(0);
+        int RoboArmMax = 5000;
+        int RoboArmTop = 5000;
+        int RoboArmMid = 2500;
+        int RoboArmBot = 1000;
+
+        RoboArmNum -= gamepad2.left_stick_y * 4;
+
+        // RoboArmNum = Math.min(RoboArmMax, RoboArmNum);
+        // RoboArmNum = Math.max(0, RoboArmNum);
+
+        // set power, position
+        // setSyncMotorPosition(ArmMotor1, ArmMotor2, Math.round(RoboArmNum), RoboArmPower);
+        // telemetry.addData("Motor position: ", RoboArmNum);
+        // telemetry.update();
+
+
+        // Sets up max and min positions
+        if(gamepad2.dpad_up) {
+            maxArmPos = (ArmMotor1.getCurrentPosition() + ArmMotor2.getCurrentPosition())/2;
+            runtoSet = true;
+        } else if (gamepad2.dpad_down) {
+            minArmPos = (ArmMotor1.getCurrentPosition() + ArmMotor2.getCurrentPosition())/2;
+        }
+
+        // If the max and min values have been set
+        if(runtoSet) {
+            if(gamepad2.right_trigger > 0.5) {
+                RoboArmNum = maxArmPos;
+
+                // Make zoom zoom
+                ArmMotor1.setVelocity(1200);
+                ArmMotor2.setVelocity(1200);
+            } else if (gamepad2.left_trigger > 0.5) {
+                RoboArmNum = minArmPos;
+
+                // Make not so zoom zoom so servo doesn't die
+                ArmMotor1.setVelocity(800);
+                ArmMotor2.setVelocity(800);
             }
+        }
+
+        telemetry.addData("Right Trigger:", gamepad2.right_trigger);
+
+        telemetry.addData("Max Pos:", maxArmPos);
+        telemetry.addData("Min Pos:", minArmPos);
 
 
-            // Clwa open / close
-        /*
-            if (gamepad2.left_trigger != 0) {
-                claw.setPosition(1);
-                telemetry.addData("action:", "claw open");
-            } else if (gamepad1.left_bumper) {
-                claw.setPosition(-1);
-                telemetry.addData("action:", "claw close");
-            }
+        ArmMotor1.setTargetPosition(Math.round(RoboArmNum));
+        ArmMotor2.setTargetPosition(Math.round(RoboArmNum));
 
-         */
+        telemetry.addData("Arm Driver 1:", ArmMotor1.getCurrentPosition());
+        telemetry.addData("Arm Driver 2:", ArmMotor2.getCurrentPosition());
 
-            /* Previous code
-            //Robot arm
-            if (gamepad2.right_bumper) {
-                speedMod = 1;
-            }
-
-            roboArm.setPower(gamepad2.left_stick_y/speedMod);
-            roboArm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
-            roboArmUp.setPower(gamepad2.right_stick_y/speedMod);
-            roboArmUp.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-            */
-            int RoboArmMax = 5000;
-            int RoboArmTop = 5000;
-            int RoboArmMid = 2500;
-            int RoboArmBot = 1000;
-            RoboArmNum -= gamepad2.left_stick_y * 4;
-            if (gamepad2.y) {
-                RoboArmNum = RoboArmTop;
-            } else if (gamepad2.b) {
-                RoboArmNum = RoboArmMid;
-            } else if (gamepad2.a) {
-                RoboArmNum = RoboArmBot;
-            }
-            // min, max values
-            RoboArmNum = Math.min(RoboArmMax, RoboArmNum);
-            RoboArmNum = Math.max(0, RoboArmNum);
-
-            // set power, position
-            // setSyncMotorPosition(ArmMotor1, ArmMotor2, Math.round(RoboArmNum), RoboArmPower);
-            // telemetry.addData("Motor position: ", RoboArmNum);
-            // telemetry.update();
-
-            ArmMotor1.setTargetPosition(Math.round(RoboArmNum));
-            ArmMotor2.setTargetPosition(Math.round(RoboArmNum));
-            telemetry.clear();
-            telemetry.addLine()
-                    .addData("targetPosition", RoboArmNum)
-                    .addData("armMotor1Position", ArmMotor1.getCurrentPosition())
-                    .addData("armMotor2Position", ArmMotor2.getCurrentPosition());
-            telemetry.update();
-
-
-                if(gamepad2.left_bumper) {
-                    //open
-                    // claw.setPosition(0.05);
-                    telemetry.addData("Claw servo set position:", "0.05");
-                } else if (gamepad2.right_bumper) {
-                    // claw.setPosition(0.3);
-                    telemetry.addData("Claw servo set position:", "0.3");
-                }
-                telemetry.update();
+        telemetry.update();
 
 
 
         // Drive --------------------------------------------------------------------
-            // assign speed modifier
-            int speedModB = 2;
+        // assign speed modifier
+        int speedModB = 2;
 
+        if (gamepad1.right_bumper) {
+            speedModB = 1;
+        }
+        if (gamepad1.left_bumper) {
+            speedModB = 3;
+        }
 
-            if (gamepad1.right_bumper) {
-                speedModB = 1;
-            }
-            if (gamepad1.left_bumper) {
-                speedModB = 3;
-            }
+        // Mecanum Drive
+        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.right_stick_x);
+        double robotAngle = Math.atan2(- 1 * gamepad1.right_stick_x, gamepad1.left_stick_x) - Math.PI / 4;
+        double rightX = gamepad1.left_stick_y;
+        final double v1 = r * Math.cos(-robotAngle) + rightX; //back left
+        final double v2 = r * Math.sin(robotAngle) - rightX; //front right
+        final double v3 = r * Math.sin(robotAngle) + rightX; //front left
+        final double v4 = r * Math.cos(-robotAngle) - rightX; //back right
 
-            // Mecanum Drive
-            double r = Math.hypot(gamepad1.left_stick_x, gamepad1.right_stick_x);
-            double robotAngle = Math.atan2(- 1 * gamepad1.right_stick_x, gamepad1.left_stick_x) - Math.PI / 4;
-            double rightX = gamepad1.left_stick_y;
-            final double v1 = r * Math.cos(-robotAngle) + rightX; //back left
-            final double v2 = r * Math.sin(robotAngle) - rightX; //front right
-            final double v3 = r * Math.sin(robotAngle) + rightX; //front left
-            final double v4 = r * Math.cos(-robotAngle) - rightX; //back right
-
-            frontLMotor.setPower(v3 / speedModB);
-            frontRMotor.setPower(v2 / speedModB);
-            leftMotor.setPower(v1 / speedModB);
-            rightMotor.setPower(v4 / speedModB);
+        frontLMotor.setPower(v3 / speedModB);
+        frontRMotor.setPower(v2 / speedModB);
+        leftMotor.setPower(v1 / speedModB);
+        rightMotor.setPower(v4 / speedModB);
     }
 }
