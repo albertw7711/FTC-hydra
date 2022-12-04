@@ -78,10 +78,10 @@ public class RobotArm extends OpMode{
         frontRMotor = hardwareMap.get(DcMotor.class, "frontR");
 
 
+        // Arm Motor
         ArmMotor1 = hardwareMap.get(DcMotorEx.class, "Arm1");
         ArmMotor2 = hardwareMap.get(DcMotorEx.class, "Arm2");
-
-
+        
         ArmMotor1.setTargetPosition(0);
         ArmMotor2.setTargetPosition(0);
         ArmMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -210,28 +210,27 @@ public class RobotArm extends OpMode{
 
 
         // Drive --------------------------------------------------------------------
-        // assign speed modifier
-        int speedModB = 2;
+        int speedMod = 2;
 
         if (gamepad1.right_bumper) {
-            speedModB = 1;
+            speedMod = 1;
         }
         if (gamepad1.left_bumper) {
-            speedModB = 3;
+            speedMod = 3;
         }
 
         // Mecanum Drive
         double r = Math.hypot(gamepad1.left_stick_x, gamepad1.right_stick_x);
         double robotAngle = Math.atan2(- 1 * gamepad1.right_stick_x, gamepad1.left_stick_x) - Math.PI / 4;
         double rightX = gamepad1.left_stick_y;
-        final double v1 = r * Math.cos(-robotAngle) + rightX; //back left
-        final double v2 = r * Math.sin(robotAngle) - rightX; //front right
-        final double v3 = r * Math.sin(robotAngle) + rightX; //front left
-        final double v4 = r * Math.cos(-robotAngle) - rightX; //back right
+        final double v1 = r * Math.cos(robotAngle) + rightX;
+        final double v2 = r * Math.sin(robotAngle) - rightX;
+        final double v3 = r * Math.sin(robotAngle) + rightX;
+        final double v4 = r * Math.cos(robotAngle) - rightX;
 
-        frontLMotor.setPower(v3 / speedModB);
-        frontRMotor.setPower(v2 / speedModB);
-        leftMotor.setPower(v1 / speedModB);
-        rightMotor.setPower(v4 / speedModB);
+        frontLMotor.setPower(v1 / speedMod);
+        frontRMotor.setPower(v2 / speedMod);
+        leftMotor.setPower(v3 / speedMod);
+        rightMotor.setPower(v4 / speedMod);
     }
 }
