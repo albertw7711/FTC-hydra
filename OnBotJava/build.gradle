@@ -1,0 +1,40 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 29
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 28
+        versionCode 59
+        versionName "12.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+}
+
+dependencies {
+    /*
+     * Other Modules
+     */
+    implementation project(':RobotCore')
+    implementation project(':RobotServer')
+    implementation project(':Blocks')
+
+    /*
+     * External
+     */
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.tools:r8:2.1.75'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
+}

@@ -1,0 +1,82 @@
+import java.text.SimpleDateFormat
+
+apply plugin: 'com.android.library'
+
+def versionNumbers = new Properties()
+file("versionNumbers.properties").withInputStream { versionNumbers.load(it) }
+
+android {
+    compileSdkVersion 29
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 28
+        versionCode 97
+        versionName "20.0"
+
+        buildConfigField "String", "SDK_BUILD_TIME", '"' + (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ROOT).format(new Date())) + '"'
+        buildConfigField "int", "SDK_MAJOR_VERSION", versionNumbers.getProperty("MAJOR_VERSION")
+        buildConfigField "int", "SDK_MINOR_VERSION", versionNumbers.getProperty("MINOR_VERSION")
+        buildConfigField "int", "SDK_POINT_VERSION", versionNumbers.getProperty("POINT_VERSION")
+
+        externalNativeBuild {
+            cmake {
+                cppFlags "-Wno-invalid-offsetof" // all our uses of offsetof() are in fact ok. disable overzealous warning
+            }
+        }
+    }
+
+
+    packagingOptions {
+        exclude '/lib/armeabi-v7a/libVuforiaReal.so'
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            jniDebuggable true
+
+            ndk {
+                abiFilters "armeabi-v7a"
+            }
+            externalNativeBuild {
+                cmake {
+                }
+            }
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            ndk {
+                abiFilters "armeabi-v7a"
+            }
+            externalNativeBuild {
+                cmake {
+                }
+            }
+        }
+    }
+
+    // Encapsulates your external native build configurations.
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+
+    ndkVersion '21.3.6528147'
+
+}
+
+dependencies {
+    /*
+     * We use 'api' so that modules that depend on us will implicitly
+     * inherit these dependencies as well
+     */
+    api fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
+    api 'com.google.code.gson:gson:2.8.0'
+    api 'androidx.core:core:1.3.0'
+    api 'com.jakewharton.threetenabp:threetenabp:1.3.1'
+    api project (':Tfod')
+}
