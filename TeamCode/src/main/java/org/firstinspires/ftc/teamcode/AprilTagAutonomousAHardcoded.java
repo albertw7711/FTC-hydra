@@ -181,13 +181,13 @@ public class AprilTagAutonomousAHardcoded extends LinearOpMode
 
         /* Actually do something useful */
         if(tagOfInterest == null || tagOfInterest.id == LEFT){
-            left();
-            forward();
-        }else if(tagOfInterest.id == MIDDLE){
-            forward();
-        }else{
             right();
             forward();
+        }else if(tagOfInterest.id == MIDDLE){
+            right();
+        }else{
+            right();
+            back();
         }
 
 
