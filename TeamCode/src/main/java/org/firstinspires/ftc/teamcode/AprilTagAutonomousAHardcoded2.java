@@ -140,7 +140,7 @@ public class AprilTagAutonomousAHardcoded2 extends LinearOpMode
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
-        claw.setPosition(0.4);
+
         while (!isStarted() && !isStopRequested())
         {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
@@ -204,6 +204,9 @@ public class AprilTagAutonomousAHardcoded2 extends LinearOpMode
          * The START command just came in: now work off the latest snapshot acquired
          * during the init loop.
          */
+
+        claw.setPosition(0.43);
+        sleep(3000);
 
         /* Update the telemetry */
         if(tagOfInterest != null)

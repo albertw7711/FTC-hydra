@@ -141,7 +141,7 @@ public class RobotArm extends OpMode{
         if(gamepad2.b) {
             // closed
             currentClawState = "closed";
-            claw.setPosition(0.4);
+            claw.setPosition(0.43);
         } else if (gamepad2.a) {
             // open
             currentClawState = "open";
@@ -155,7 +155,7 @@ public class RobotArm extends OpMode{
         int RoboArmMid = 2500;
         int RoboArmBot = 1000;
 
-        RoboArmNum += gamepad2.left_stick_y * 4;
+        RoboArmNum += gamepad2.left_stick_y * 8;
 
         // RoboArmNum = Math.min(RoboArmMax, RoboArmNum);
         // RoboArmNum = Math.max(0, RoboArmNum);
