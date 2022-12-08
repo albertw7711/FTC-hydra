@@ -117,8 +117,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
         // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "frontL");
-        leftRear = hardwareMap.get(DcMotorEx.class, "backL");
+        leftFront = hardwareMap.get(DcMotorEx.class, "backL");
+        leftRear = hardwareMap.get(DcMotorEx.class, "frontL");
         rightRear = hardwareMap.get(DcMotorEx.class, "backR");
         rightFront = hardwareMap.get(DcMotorEx.class, "frontR");
 
@@ -300,7 +300,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public Double getExternalHeadingVelocity() {
-        return (double) imu.getAngularVelocity().zRotationRate;
+        return (double) imu.getAngularVelocity().xRotationRate;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
