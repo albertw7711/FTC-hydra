@@ -73,10 +73,8 @@ public class RobotArm extends OpMode{
 
         leftMotor = hardwareMap.get(DcMotor.class, "backL");
         rightMotor = hardwareMap.get(DcMotor.class, "backR");
-
         frontLMotor = hardwareMap.get(DcMotor.class, "frontL");
         frontRMotor = hardwareMap.get(DcMotor.class, "frontR");
-
 
         ArmMotor1 = hardwareMap.get(DcMotorEx.class, "Arm1");
         ArmMotor2 = hardwareMap.get(DcMotorEx.class, "Arm2");
@@ -141,12 +139,12 @@ public class RobotArm extends OpMode{
 
         // Claw Code
         if(gamepad2.b) {
-            // open
-            currentClawState = "open";
-            claw.setPosition(0.4);
-        } else if (gamepad2.a) {
             // closed
             currentClawState = "closed";
+            claw.setPosition(0.43);
+        } else if (gamepad2.a) {
+            // open
+            currentClawState = "open";
             claw.setPosition(0);
         }
 
@@ -157,7 +155,7 @@ public class RobotArm extends OpMode{
         int RoboArmMid = 2500;
         int RoboArmBot = 1000;
 
-        RoboArmNum -= gamepad2.left_stick_y * 4;
+        RoboArmNum += gamepad2.left_stick_y * 8;
 
         // RoboArmNum = Math.min(RoboArmMax, RoboArmNum);
         // RoboArmNum = Math.max(0, RoboArmNum);
@@ -174,6 +172,7 @@ public class RobotArm extends OpMode{
             runtoSet = true;
         } else if (gamepad2.dpad_down) {
             minArmPos = (ArmMotor1.getCurrentPosition() + ArmMotor2.getCurrentPosition())/2;
+            runtoSet = true;
         }
 
         // If the max and min values have been set
@@ -195,16 +194,22 @@ public class RobotArm extends OpMode{
 
         telemetry.addData("Right Trigger:", gamepad2.right_trigger);
 
-        telemetry.addData("Max Pos:", maxArmPos);
-        telemetry.addData("Min Pos:", minArmPos);
+        // telemetry.addData("Max Pos:", maxArmPos);
+        // telemetry.addData("Min Pos:", minArmPos);
 
 
         ArmMotor1.setTargetPosition(Math.round(RoboArmNum));
         ArmMotor2.setTargetPosition(Math.round(RoboArmNum));
 
+        // telemetry.addData("Arm Driver 1:", ArmMotor1.getCurrentPosition());
+        // telemetry.addData("Arm Driver 2:", ArmMotor2.getCurrentPosition());
+
+        telemetry.addData("frontL", frontLMotor.getCurrentPosition());
+        telemetry.addData("backL", leftMotor.getCurrentPosition());
+        telemetry.addData("frontR", frontRMotor.getCurrentPosition());
+        telemetry.addData("backR", rightMotor.getCurrentPosition());
         telemetry.addData("Arm Driver 1:", ArmMotor1.getCurrentPosition());
         telemetry.addData("Arm Driver 2:", ArmMotor2.getCurrentPosition());
-
         telemetry.update();
 
 
@@ -224,14 +229,14 @@ public class RobotArm extends OpMode{
         double r = Math.hypot(gamepad1.left_stick_x, gamepad1.right_stick_x);
         double robotAngle = Math.atan2(- 1 * gamepad1.right_stick_x, gamepad1.left_stick_x) - Math.PI / 4;
         double rightX = gamepad1.left_stick_y;
-        final double v1 = r * Math.cos(-robotAngle) + rightX; //back left
-        final double v2 = r * Math.sin(robotAngle) - rightX; //front right
-        final double v3 = r * Math.sin(robotAngle) + rightX; //front left
-        final double v4 = r * Math.cos(-robotAngle) - rightX; //back right
+        final double v1 = r * Math.cos(robotAngle) + rightX;
+        final double v2 = r * Math.sin(robotAngle) - rightX;
+        final double v3 = r * Math.sin(robotAngle) + rightX;
+        final double v4 = r * Math.cos(robotAngle) - rightX;
 
-        frontLMotor.setPower(v3 / speedModB);
+        frontLMotor.setPower(v1 / speedModB);
         frontRMotor.setPower(v2 / speedModB);
-        leftMotor.setPower(v1 / speedModB);
+        leftMotor.setPower(v3 / speedModB);
         rightMotor.setPower(v4 / speedModB);
     }
 }
