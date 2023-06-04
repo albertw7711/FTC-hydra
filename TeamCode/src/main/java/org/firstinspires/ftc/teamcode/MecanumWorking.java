@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -16,9 +17,14 @@ public class MecanumWorking extends OpMode{
     DcMotor frontLMotor = null;
     DcMotor frontRMotor = null;
 
+    Servo claw;
+    boolean clawOpen = false;
+
     //INTRODUCE VARIABLES HERE
 
     public void init() {
+
+        claw = hardwareMap.get(Servo.class, "Servo");
 
         leftMotor = hardwareMap.get(DcMotor.class, "backL");
         rightMotor = hardwareMap.get(DcMotor.class, "backR");
@@ -35,6 +41,17 @@ public class MecanumWorking extends OpMode{
     public void loop() {
         telemetry.clear();
 
+        // Claw Code
+        if(gamepad2.b) {
+            // closed
+            clawOpen = false;
+            claw.setPosition(0.43);
+        } else if (gamepad2.a) {
+            // open
+            clawOpen = true;
+            claw.setPosition(0);
+        }
+        telemetry.addData("Claw Open:", clawOpen);
 
         // Drive --------------------------------------------------------------------
         // assign speed modifier
