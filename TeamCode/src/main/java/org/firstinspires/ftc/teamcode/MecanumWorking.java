@@ -60,6 +60,8 @@ public class MecanumWorking extends OpMode{
         telemetry.addData("Claw Open:", clawOpen);
 
         ArmMotor.setPower((gamepad2.left_stick_y));
+        telemetry.addData("RoboArm encoder:", ArmMotor.getCurrentPosition());
+        telemetry.update();
 
         // Drive --------------------------------------------------------------------
         // assign speed modifier
