@@ -81,9 +81,9 @@ public class MecanumWorking extends OpMode{
         final double v3 = r * Math.sin(robotAngle) + rightX; //front left
         final double v4 = r * Math.cos(-robotAngle) - rightX; //back right
 
-        frontLMotor.setPower(-v3 / speedModB);
-        frontRMotor.setPower(-v2 / speedModB);
-        leftMotor.setPower(-v1 / speedModB);
-        rightMotor.setPower(-v4 / speedModB);
+        frontLMotor.setPower(v3 / speedModB);
+        frontRMotor.setPower(v2 / speedModB);
+        leftMotor.setPower(v1 / speedModB);
+        rightMotor.setPower(v4 / speedModB);
     }
 }
