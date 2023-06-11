@@ -17,6 +17,9 @@ public class MecanumWorking extends OpMode{
     DcMotor frontLMotor = null;
     DcMotor frontRMotor = null;
 
+    DcMotor ArmMotor = null;
+    float RoboArmNum = 0;
+
     Servo claw;
     boolean clawOpen = false;
 
@@ -32,6 +35,9 @@ public class MecanumWorking extends OpMode{
         frontLMotor = hardwareMap.get(DcMotor.class, "frontL");
         frontRMotor = hardwareMap.get(DcMotor.class, "frontR");
 
+        ArmMotor = hardwareMap.get(DcMotor.class, "armMotor");
+        ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         telemetry.setAutoClear(false);
 
     }
@@ -45,13 +51,15 @@ public class MecanumWorking extends OpMode{
         if(gamepad2.b) {
             // closed
             clawOpen = false;
-            claw.setPosition(0.43);
+            claw.setPosition(0.9);
         } else if (gamepad2.a) {
             // open
             clawOpen = true;
-            claw.setPosition(0);
+            claw.setPosition(0.43);
         }
         telemetry.addData("Claw Open:", clawOpen);
+
+        ArmMotor.setPower((gamepad2.left_stick_y));
 
         // Drive --------------------------------------------------------------------
         // assign speed modifier
