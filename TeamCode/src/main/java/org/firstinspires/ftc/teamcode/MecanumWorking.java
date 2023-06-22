@@ -51,7 +51,7 @@ public class MecanumWorking extends OpMode{
         if(gamepad2.b) {
             // closed
             clawOpen = false;
-            claw.setPosition(0.9);
+            claw.setPosition(0.95);
         } else if (gamepad2.a) {
             // open
             clawOpen = true;
@@ -59,9 +59,15 @@ public class MecanumWorking extends OpMode{
         }
         telemetry.addData("Claw Open:", clawOpen);
 
-        ArmMotor.setPower(-(gamepad2.left_stick_y));
+        int speedModA = 2;
+        if (gamepad1.right_bumper) {
+            speedModA = 1;
+        }
+
+        ArmMotor.setPower(-(gamepad2.left_stick_y) / speedModA);
         telemetry.addData("RoboArm encoder:", ArmMotor.getCurrentPosition());
         telemetry.update();
+
 
         // Drive --------------------------------------------------------------------
         // assign speed modifier
