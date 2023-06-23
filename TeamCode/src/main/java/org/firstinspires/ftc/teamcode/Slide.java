@@ -1,15 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @TeleOp()
-public class MecanumWorking extends OpMode{
+public class Slide extends OpMode{
 
     DcMotor leftMotor = null;
     DcMotor rightMotor = null;
@@ -17,8 +19,7 @@ public class MecanumWorking extends OpMode{
     DcMotor frontLMotor = null;
     DcMotor frontRMotor = null;
 
-    DcMotor ArmMotor = null;
-    float RoboArmNum = 0;
+    DcMotorEx ArmMotor = null;
 
     Servo claw;
     boolean clawOpen = false;
@@ -35,8 +36,11 @@ public class MecanumWorking extends OpMode{
         frontLMotor = hardwareMap.get(DcMotor.class, "frontL");
         frontRMotor = hardwareMap.get(DcMotor.class, "frontR");
 
-        ArmMotor = hardwareMap.get(DcMotor.class, "armMotor");
+        ArmMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
+        ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ArmMotor.setTargetPosition(0);
 
         telemetry.setAutoClear(false);
 
@@ -46,13 +50,17 @@ public class MecanumWorking extends OpMode{
 
     public void loop() {
         telemetry.clear();
+        int ArmPos0 = 0;
+        int ArmPos1 = 1650;
+        int ArmPos2 = 2700;
+        int ArmPos3 = 3800;
 
         // Claw Code
-        if(gamepad2.b) {
+        if(gamepad2.left_bumper) {
             // closed
             clawOpen = false;
             claw.setPosition(1);
-        } else if (gamepad2.a) {
+        } else if (gamepad2.right_bumper) {
             // open
             clawOpen = true;
             claw.setPosition(0.43);
@@ -60,13 +68,31 @@ public class MecanumWorking extends OpMode{
         telemetry.addData("Claw Open:", clawOpen);
 
         int speedModA = 2;
-        if (gamepad2.right_bumper) {
+        if (gamepad2.y) {
             speedModA = 1;
         }
+        else if (gamepad2.x) {
+            speedModA = 3;
+        }
 
-        ArmMotor.setPower(-(gamepad2.left_stick_y) / speedModA);
-        telemetry.addData("RoboArm encoder:", ArmMotor.getCurrentPosition());
-        telemetry.update();
+        int slidePos = ArmMotor.getCurrentPosition();
+        ArmMotor.setVelocity(1800 / speedModA);
+        telemetry.addData("Current Position", slidePos);
+        if (gamepad2.dpad_down) {
+            ArmMotor.setTargetPosition(ArmPos0);
+            telemetry.addData("target pos", ArmPos0);
+        } else if (gamepad2.dpad_left) {
+            ArmMotor.setTargetPosition(ArmPos1);
+            telemetry.addData("target pos", ArmPos1);
+        } else if (gamepad2.dpad_right) {
+            ArmMotor.setTargetPosition(ArmPos2);
+            telemetry.addData("target pos", ArmPos2);
+        } else if (gamepad2.dpad_up) {
+            ArmMotor.setTargetPosition(ArmPos3);
+            telemetry.addData("target pos", ArmPos3);
+        }
+
+
 
 
         // Drive --------------------------------------------------------------------
