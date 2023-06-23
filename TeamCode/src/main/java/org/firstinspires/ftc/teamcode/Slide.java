@@ -76,7 +76,7 @@ public class Slide extends OpMode{
         }
 
         int slidePos = ArmMotor.getCurrentPosition();
-        ArmMotor.setVelocity(1800 / speedModA);
+        ArmMotor.setVelocity(1500 / speedModA);
         telemetry.addData("Current Position", slidePos);
         if (gamepad2.dpad_down) {
             ArmMotor.setTargetPosition(ArmPos0);
