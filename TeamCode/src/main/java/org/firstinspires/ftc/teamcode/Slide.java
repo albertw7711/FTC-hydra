@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
@@ -35,12 +36,13 @@ public class Slide extends OpMode{
 
         frontLMotor = hardwareMap.get(DcMotor.class, "frontL");
         frontRMotor = hardwareMap.get(DcMotor.class, "frontR");
+        frontRMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         ArmMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         ArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ArmMotor.setTargetPosition(0);
         ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        ArmMotor.setTargetPosition(0);
 
         telemetry.setAutoClear(false);
 

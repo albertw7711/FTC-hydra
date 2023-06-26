@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
@@ -34,6 +35,7 @@ public class MecanumWorking extends OpMode{
 
         frontLMotor = hardwareMap.get(DcMotor.class, "frontL");
         frontRMotor = hardwareMap.get(DcMotor.class, "frontR");
+        frontRMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         ArmMotor = hardwareMap.get(DcMotor.class, "armMotor");
         ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
