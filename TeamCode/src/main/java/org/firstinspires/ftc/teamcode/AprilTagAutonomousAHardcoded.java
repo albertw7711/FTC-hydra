@@ -24,6 +24,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
@@ -42,6 +43,7 @@ public class AprilTagAutonomousAHardcoded extends LinearOpMode
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
+    Servo claw;
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -93,6 +95,7 @@ public class AprilTagAutonomousAHardcoded extends LinearOpMode
         leftBackDrive  = hardwareMap.get(DcMotor.class, "backL");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "frontR");
         rightBackDrive = hardwareMap.get(DcMotor.class, "backR");
+        claw = hardwareMap.get(Servo.class, "Servo");
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -181,11 +184,14 @@ public class AprilTagAutonomousAHardcoded extends LinearOpMode
 
         /* Actually do something useful */
         if(tagOfInterest.id == LEFT){
+            claw.setPosition(1); // grab cone
             left();
             forward();
         }else if(tagOfInterest == null || tagOfInterest.id == MIDDLE){
+            claw.setPosition(1);
             forward();
         }else{
+            claw.setPosition(1);
             right();
             forward();
         }
