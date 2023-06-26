@@ -98,7 +98,7 @@ public class AprilTagAutonomousAHardcoded extends LinearOpMode
         claw = hardwareMap.get(Servo.class, "Servo");
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         /*
          * The INIT-loop:
@@ -183,11 +183,11 @@ public class AprilTagAutonomousAHardcoded extends LinearOpMode
 
 
         /* Actually do something useful */
-        if(tagOfInterest.id == LEFT){
+        if(tagOfInterest == null || tagOfInterest.id == LEFT){
             claw.setPosition(1); // grab cone
             left();
             forward();
-        }else if(tagOfInterest == null || tagOfInterest.id == MIDDLE){
+        }else if(tagOfInterest.id == MIDDLE){
             claw.setPosition(1);
             forward();
         }else{
