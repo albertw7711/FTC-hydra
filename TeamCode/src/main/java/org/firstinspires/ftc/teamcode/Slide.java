@@ -56,6 +56,7 @@ public class Slide extends OpMode{
         int ArmPos1 = 1650;
         int ArmPos2 = 2700;
         int ArmPos3 = 3800;
+        int additional = Math.round(gamepad2.left_stick_y);
 
         // Claw Code
         if(gamepad2.left_bumper) {
@@ -81,17 +82,17 @@ public class Slide extends OpMode{
         ArmMotor.setVelocity(1500 / speedModA);
         telemetry.addData("Current Position", slidePos);
         if (gamepad2.dpad_down) {
-            ArmMotor.setTargetPosition(ArmPos0);
-            telemetry.addData("target pos", ArmPos0);
+            ArmMotor.setTargetPosition(ArmPos0 + additional);
+            telemetry.addData("target pos", ArmPos0 + additional);
         } else if (gamepad2.dpad_left) {
-            ArmMotor.setTargetPosition(ArmPos1);
-            telemetry.addData("target pos", ArmPos1);
+            ArmMotor.setTargetPosition(ArmPos1 + additional);
+            telemetry.addData("target pos", ArmPos1 + additional);
         } else if (gamepad2.dpad_right) {
-            ArmMotor.setTargetPosition(ArmPos2);
-            telemetry.addData("target pos", ArmPos2);
+            ArmMotor.setTargetPosition(ArmPos2 + additional);
+            telemetry.addData("target pos", ArmPos2 + additional);
         } else if (gamepad2.dpad_up) {
-            ArmMotor.setTargetPosition(ArmPos3);
-            telemetry.addData("target pos", ArmPos3);
+            ArmMotor.setTargetPosition(ArmPos3 + additional);
+            telemetry.addData("target pos", ArmPos3 + additional);
         }
 
 
