@@ -25,7 +25,7 @@ public class Slide extends OpMode{
     Servo claw;
     boolean clawOpen = false;
 
-    int additional;
+    int setPos;
 
     //INTRODUCE VARIABLES HERE
 
@@ -54,13 +54,13 @@ public class Slide extends OpMode{
 
     public void loop() {
         telemetry.clear();
-        additional += Math.round(gamepad2.left_stick_y);
+        if (setPos < 4000) {
+            setPos += 8 * Math.round(-gamepad2.left_stick_y); // adds value of joystick
+        }
         int ArmPos0 = 0;
         int ArmPos1 = 1650;
         int ArmPos2 = 2700;
         int ArmPos3 = 3800;
-        telemetry.addData("Additional", additional);
-        int setPos = 0;
 
         // Claw Code
         if(gamepad2.left_bumper) {
@@ -83,29 +83,25 @@ public class Slide extends OpMode{
         }
 
         int slidePos = ArmMotor.getCurrentPosition();
-        ArmMotor.setVelocity(1500 / speedModA);
+        ArmMotor.setVelocity(1800 / speedModA);
         telemetry.addData("Current Position", slidePos);
         if (gamepad2.dpad_down) {
             setPos = ArmPos0;
-            ArmMotor.setTargetPosition(setPos);
             telemetry.addData("target pos", setPos);
         } else if (gamepad2.dpad_left) {
             setPos = ArmPos1;
-            ArmMotor.setTargetPosition(setPos);
             telemetry.addData("target pos", setPos);
         } else if (gamepad2.dpad_right) {
             setPos = ArmPos2;
-            ArmMotor.setTargetPosition(setPos);
             telemetry.addData("target pos", setPos);
         } else if (gamepad2.dpad_up) {
             setPos = ArmPos3;
-            ArmMotor.setTargetPosition(setPos);
             telemetry.addData("target pos", setPos);
         }
-        if (gamepad2.b) {
-            setPos += additional;
-            ArmMotor.setTargetPosition(setPos);
-        }
+
+        telemetry.addData("Setpos", setPos);
+
+        ArmMotor.setTargetPosition(setPos); // joystick position or key
 
 
 
