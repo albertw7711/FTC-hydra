@@ -74,12 +74,9 @@ public class Slide extends OpMode{
         }
         telemetry.addData("Claw Open:", clawOpen);
 
-        int speedModA = 2;
-        if (gamepad2.y) {
-            speedModA = 1;
-        }
-        else if (gamepad2.x) {
-            speedModA = 3;
+        int speedModA = 1;
+        if (gamepad2.x) {
+            speedModA = 2;
         }
 
         int slidePos = ArmMotor.getCurrentPosition();

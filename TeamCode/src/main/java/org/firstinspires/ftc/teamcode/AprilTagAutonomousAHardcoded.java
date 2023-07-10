@@ -253,7 +253,7 @@ public class AprilTagAutonomousAHardcoded extends LinearOpMode
         rightFrontDrive.setPower(0.5);
         leftBackDrive.setPower(0.5);
         rightBackDrive.setPower(0.5);
-        sleep(1000);
+        sleep(1200);
         leftFrontDrive.setPower(0);
         rightFrontDrive.setPower(0);
         leftBackDrive.setPower(0);
