@@ -185,13 +185,16 @@ public class AprilTagAutonomousAHardcoded extends LinearOpMode
         /* Actually do something useful */
         if(tagOfInterest == null || tagOfInterest.id == LEFT){
             claw.setPosition(1); // grab cone
+            sleep(20);
             left();
             forward();
         }else if(tagOfInterest.id == MIDDLE){
             claw.setPosition(1);
+            sleep(20);
             forward();
         }else{
             claw.setPosition(1);
+            sleep(20);
             right();
             forward();
         }
