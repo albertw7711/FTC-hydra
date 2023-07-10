@@ -25,6 +25,8 @@ public class Slide extends OpMode{
     Servo claw;
     boolean clawOpen = false;
 
+    int additional;
+
     //INTRODUCE VARIABLES HERE
 
     public void init() {
@@ -52,11 +54,13 @@ public class Slide extends OpMode{
 
     public void loop() {
         telemetry.clear();
+        additional += Math.round(gamepad2.left_stick_y);
         int ArmPos0 = 0;
         int ArmPos1 = 1650;
         int ArmPos2 = 2700;
         int ArmPos3 = 3800;
-        int additional = Math.round(gamepad2.left_stick_y);
+        telemetry.addData("Additional", additional);
+        int setPos = 0;
 
         // Claw Code
         if(gamepad2.left_bumper) {
@@ -82,17 +86,25 @@ public class Slide extends OpMode{
         ArmMotor.setVelocity(1500 / speedModA);
         telemetry.addData("Current Position", slidePos);
         if (gamepad2.dpad_down) {
-            ArmMotor.setTargetPosition(ArmPos0 + additional);
-            telemetry.addData("target pos", ArmPos0 + additional);
+            setPos = ArmPos0;
+            ArmMotor.setTargetPosition(setPos);
+            telemetry.addData("target pos", setPos);
         } else if (gamepad2.dpad_left) {
-            ArmMotor.setTargetPosition(ArmPos1 + additional);
-            telemetry.addData("target pos", ArmPos1 + additional);
+            setPos = ArmPos1;
+            ArmMotor.setTargetPosition(setPos);
+            telemetry.addData("target pos", setPos);
         } else if (gamepad2.dpad_right) {
-            ArmMotor.setTargetPosition(ArmPos2 + additional);
-            telemetry.addData("target pos", ArmPos2 + additional);
+            setPos = ArmPos2;
+            ArmMotor.setTargetPosition(setPos);
+            telemetry.addData("target pos", setPos);
         } else if (gamepad2.dpad_up) {
-            ArmMotor.setTargetPosition(ArmPos3 + additional);
-            telemetry.addData("target pos", ArmPos3 + additional);
+            setPos = ArmPos3;
+            ArmMotor.setTargetPosition(setPos);
+            telemetry.addData("target pos", setPos);
+        }
+        if (gamepad2.b) {
+            setPos += additional;
+            ArmMotor.setTargetPosition(setPos);
         }
 
 
